@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#111512">
+  <meta name="color-scheme" content="dark">
+  <title>무회의령 화물국</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="phone-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">NAN-26 ORBITAL FREIGHT</p>
+        <h1>무회의령 화물국</h1>
+      </div>
+      <div class="wallet" aria-label="보유 자금"><span>보유금</span><strong id="moneyDisplay">0 C</strong></div>
+    </header>
+
+    <nav class="main-nav" aria-label="주 화면">
+      <button class="nav-button active" data-screen="game" aria-pressed="true">배송</button>
+      <button class="nav-button" data-screen="growth" aria-pressed="false">성장</button>
+      <button class="nav-button" data-screen="collection" aria-pressed="false">도감</button>
+    </nav>
+
+    <main>
+      <section id="gameScreen" class="screen active" aria-label="배송 게임">
+        <div id="briefingPanel" class="briefing panel">
+          <div class="section-heading">
+            <div>
+              <span class="step-code">01 / 계약 배정</span>
+              <h2>오늘의 운송 계약</h2>
+            </div>
+            <button id="resetSaveButton" class="text-button danger" aria-label="저장 데이터 초기화">기록 초기화</button>
+          </div>
+          <p class="brief-copy">위험과 보상을 확인하고 하나를 선택하십시오. 손실 범위는 출항 전에 다시 표시됩니다.</p>
+          <div id="contractChoices" class="choice-list" role="list"></div>
+        </div>
+
+        <div id="planetPanel" class="briefing panel hidden">
+          <div class="section-heading">
+            <div>
+              <span class="step-code">02 / 항로 설정</span>
+              <h2>목적 행성 선택</h2>
+            </div>
+          </div>
+          <div id="planetChoices" class="planet-list" role="list"></div>
+          <button id="beginLoadingButton" class="primary-button" disabled>상차 작업 시작</button>
+        </div>
+
+        <div id="loadingPanel" class="game-stage hidden">
+          <div class="mission-strip">
+            <div><span>계약</span><strong id="missionContract">-</strong></div>
+            <div><span>목적지</span><strong id="missionPlanet">-</strong></div>
+            <div><span>중력</span><strong id="missionGravity">-</strong></div>
+          </div>
+
+          <div class="telemetry-grid" aria-label="실시간 운송 정보">
+            <div class="telemetry-cell critical"><span>제한시간</span><strong id="timerDisplay">00:00</strong></div>
+            <div class="telemetry-cell"><span>적재율</span><strong id="fillDisplay">0%</strong></div>
+            <div class="telemetry-cell"><span>안정도</span><strong id="stabilityDisplay">100%</strong></div>
+            <div class="telemetry-cell"><span>예상 수익</span><strong id="profitDisplay">0 C</strong></div>
+          </div>
+
+          <div class="meter-line">
+            <div><span>엔진 진동 예측</span><strong id="vibrationText">낮음</strong></div>
+            <div class="meter"><i id="vibrationMeter"></i></div>
+          </div>
+
+          <section class="cargo-bay-wrap" aria-labelledby="bayTitle">
+            <div class="bay-header">
+              <div>
+                <span class="step-code">상단 / 적재칸</span>
+                <h2 id="bayTitle">화물 적재 구역</h2>
+              </div>
+              <div id="gravityVector" class="gravity-vector" aria-label="중력 방향">↓ 1.0G</div>
+            </div>
+            <div id="cargoBay" class="cargo-bay" aria-label="화물을 놓는 적재칸">
+              <div class="bay-grid"></div>
+              <div class="safe-line"><span>90% PERFECT FIT</span></div>
+              <div id="placementHint" class="placement-hint">화물을 이곳으로 드래그</div>
+              <div class="bay-clamp clamp-left"></div>
+              <div class="bay-clamp clamp-right"></div>
+            </div>
+            <div id="placementMessage" class="placement-message" aria-live="polite">화물의 모든 곡면이 경계 안에 들어와야 합니다.</div>
+          </section>
+
+          <section class="conveyor-wrap" aria-labelledby="beltTitle">
+            <div class="belt-heading">
+              <div>
+                <span class="step-code">하단 / 입고 라인</span>
+                <h2 id="beltTitle">컨베이어 C-04</h2>
+              </div>
+              <div class="next-cargo">다음 <span id="nextCargoPreview" aria-hidden="true"></span></div>
+            </div>
+            <div id="conveyor" class="conveyor" aria-label="움직이는 화물 컨베이어">
+              <div class="belt-markings"></div>
+            </div>
+            <div class="belt-controls">
+              <button id="pauseButton" class="control-button" aria-label="컨베이어 일시 정지">
+                <span>정지</span><small id="pauseCount">1회</small>
+              </button>
+              <button id="boostButton" class="control-button" aria-label="컨베이어 가속">
+                <span>가속</span><small id="heatText">열 0%</small>
+              </button>
+              <button id="reverseButton" class="control-button" aria-label="컨베이어 역회전">
+                <span>역회전</span><small id="reverseCount">2회</small>
+              </button>
+            </div>
+          </section>
+
+          <button id="launchButton" class="launch-button">봉인 후 출항 <span id="launchEstimate">예상 0 C</span></button>
+        </div>
+
+        <div id="deliveryPanel" class="delivery-stage hidden">
+          <div class="delivery-header">
+            <span class="step-code">03 / 궤도 운송</span>
+            <strong id="deliveryTimer">5.0</strong>
+          </div>
+          <div id="deliveryBay" class="delivery-bay" aria-label="운송 중 화물 상태">
+            <div class="bay-grid"></div>
+            <div id="shockWarning" class="shock-warning">충격파 접근</div>
+          </div>
+          <div class="flight-zone">
+            <div class="speed-lines"></div>
+            <div id="spaceship" class="spaceship" aria-label="비행 중인 화물선">
+              <div class="ship-nose"></div>
+              <div class="ship-body"><span></span></div>
+              <div class="ship-wing wing-left"></div>
+              <div class="ship-wing wing-right"></div>
+              <div class="ship-engine engine-left"></div>
+              <div class="ship-engine engine-right"></div>
+              <div class="engine-flame flame-left"></div>
+              <div class="engine-flame flame-right"></div>
+            </div>
+            <div class="route-readout">
+              <span>연료 <strong id="fuelDisplay">100%</strong></span>
+              <div class="meter fuel"><i id="fuelMeter"></i></div>
+            </div>
+          </div>
+          <div class="active-controls">
+            <button id="gyroButton" class="ability-button" aria-label="자이로 보정 사용">
+              <span>자이로 보정</span><small>연료 18 · 흔들림 완화</small>
+            </button>
+            <button id="clampButton" class="ability-button" aria-label="긴급 클램프 사용">
+              <span>긴급 클램프</span><small>연료 12 · 화물 고정</small>
+            </button>
+          </div>
+          <p id="deliveryLog" class="delivery-log" aria-live="assertive">엔진 점화. 진동 예측값을 감시하십시오.</p>
+        </div>
+
+        <div id="resultPanel" class="result-panel panel hidden">
+          <span class="step-code">04 / 정산 완료</span>
+          <div id="resultStamp" class="result-stamp">배송 성공</div>
+          <h2 id="resultTitle">화물 인계 완료</h2>
+          <p id="resultReason" class="result-reason"></p>
+          <div class="result-grid">
+            <div><span>최종 적재율</span><strong id="resultFill">0%</strong></div>
+            <div><span>화물 상태</span><strong id="resultCondition">정상</strong></div>
+            <div><span>잔여 연료</span><strong id="resultFuel">0%</strong></div>
+            <div><span>지급액</span><strong id="resultPay">0 C</strong></div>
+          </div>
+          <div id="perfectBanner" class="perfect-banner hidden">PERFECT FIT / 공간 활용 90% 이상</div>
+          <button id="retryButton" class="primary-button">다시 배송</button>
+        </div>
+      </section>
+
+      <section id="growthScreen" class="screen" aria-label="성장 화면">
+        <div class="panel">
+          <div class="section-heading">
+            <div><span class="step-code">정비 격납고</span><h2>우주선 업그레이드</h2></div>
+          </div>
+          <div id="shipUpgrades" class="upgrade-list"></div>
+        </div>
+        <div class="panel">
+          <div class="section-heading">
+            <div><span class="step-code">승무원 관리</span><h2>직원 훈련</h2></div>
+          </div>
+          <div id="staffUpgrades" class="upgrade-list"></div>
+        </div>
+        <div class="panel">
+          <div class="section-heading">
+            <div><span class="step-code">항로 관리</span><h2>행성 해금</h2></div>
+          </div>
+          <div id="planetUnlocks" class="upgrade-list"></div>
+        </div>
+      </section>
+
+      <section id="collectionScreen" class="screen" aria-label="도감 화면">
+        <div class="collection-summary">
+          <span class="step-code">ARCHIVE / 발견 기록</span>
+          <h2>화물국 도감</h2>
+          <p>실제 배송하거나 해금한 항목만 기록됩니다.</p>
+        </div>
+        <div id="collectionContent"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <span class="step-code">확인 필요</span>
+      <h2 id="modalTitle">출항하시겠습니까?</h2>
+      <p id="modalBody"></p>
+      <div class="modal-actions">
+        <button id="modalCancel" class="secondary-button">취소</button>
+        <button id="modalConfirm" class="primary-button">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
