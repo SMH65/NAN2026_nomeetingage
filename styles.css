@@ -18,8 +18,8 @@
   font-family: "Arial Narrow", "Malgun Gothic", Arial, sans-serif;
 }
 
-* { box-sizing: border-box; }
-html, body { min-height: 100%; margin: 0; background: var(--bg); color: var(--text); }
+* { box-sizing: border-box; min-width: 0; }
+html, body { width: 100%; min-height: 100%; margin: 0; overflow-x: hidden; background: var(--bg); color: var(--text); }
 body {
   overscroll-behavior: none;
   background-image:
@@ -33,7 +33,8 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .hidden { display: none !important; }
 
 .phone-shell {
-  width: min(100%, 460px);
+  width: 100vw;
+  max-width: 460px;
   min-height: 100dvh;
   margin: 0 auto;
   background: var(--shell);
@@ -139,6 +140,34 @@ h2 { margin-bottom: 0; font-size: 19px; letter-spacing: -.03em; }
 .bay-header, .belt-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
 .bay-header h2, .belt-heading h2 { font-size: 15px; }
 .gravity-vector { min-width: 66px; padding: 6px 8px; border: 1px solid var(--orange-dim); color: var(--orange); font-weight: 900; text-align: center; }
+.bay-viewport {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  background: #090d0a;
+}
+.bay-pan-handle {
+  min-height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  background: #1b211c;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+}
+.bay-pan-handle i {
+  width: 34px;
+  height: 8px;
+  border-block: 2px solid #697169;
+}
 .cargo-bay, .delivery-bay {
   position: relative;
   width: 100%;
@@ -149,6 +178,11 @@ h2 { margin-bottom: 0; font-size: 19px; letter-spacing: -.03em; }
   background: #090d0a;
   touch-action: none;
 }
+.cargo-bay {
+  transform: translateY(var(--bay-pan, 0px));
+  transition: transform .08s linear;
+}
+.bay-pan-handle.dragging + .bay-viewport .cargo-bay { transition: none; }
 .cargo-bay.invalid { border-color: var(--danger); }
 .cargo-bay.valid { border-color: var(--lime); }
 .bay-grid {

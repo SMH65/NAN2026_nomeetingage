@@ -76,12 +76,17 @@
               </div>
               <div id="gravityVector" class="gravity-vector" aria-label="중력 방향">↓ 1.0G</div>
             </div>
-            <div id="cargoBay" class="cargo-bay" aria-label="화물을 놓는 적재칸">
-              <div class="bay-grid"></div>
-              <div class="safe-line"><span>90% PERFECT FIT</span></div>
-              <div id="placementHint" class="placement-hint">화물을 이곳으로 드래그</div>
-              <div class="bay-clamp clamp-left"></div>
-              <div class="bay-clamp clamp-right"></div>
+            <div id="bayPanHandle" class="bay-pan-handle hidden" role="button" tabindex="0" aria-label="확장 화물칸을 위아래로 드래그">
+              <span>확장 화물칸 이동</span><i></i>
+            </div>
+            <div id="bayViewport" class="bay-viewport">
+              <div id="cargoBay" class="cargo-bay" aria-label="화물을 놓는 적재칸">
+                <div class="bay-grid"></div>
+                <div class="safe-line"><span>90% PERFECT FIT</span></div>
+                <div id="placementHint" class="placement-hint">화물을 이곳으로 드래그</div>
+                <div class="bay-clamp clamp-left"></div>
+                <div class="bay-clamp clamp-right"></div>
+              </div>
             </div>
             <div id="placementMessage" class="placement-message" aria-live="polite">화물의 모든 곡면이 경계 안에 들어와야 합니다.</div>
           </section>
